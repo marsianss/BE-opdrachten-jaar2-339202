@@ -5,11 +5,11 @@
 
 class Database
 {
-    private $dbHost = DB_HOST;
-    private $dbName = DB_NAME;
-    private $dbUser = DB_USER;
-    private $dbPass = DB_PASS;
-    private $port = port;
+    private $dbHost = 'localhost';
+    private $dbName = 'jamin_a';
+    private $dbUser = 'root';
+    private $dbPass = '';
+    private $port = 3306;
 
     private $dbHandler;
     private $statement;

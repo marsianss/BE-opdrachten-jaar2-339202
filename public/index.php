@@ -1,4 +1,4 @@
-git commit -m "first commit"<?php
+<?php
    /**
     * We sluiten het bestand require.php in
     */ 

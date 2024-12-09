@@ -66,16 +66,15 @@ INSERT INTO `Product` (`Naam`, `Barcode`, `Verpakkingseenheid`, `IsActief`, `Opm
 ('Mintnopjes', '8719587231278', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
 ('Schoolkrijt', '8719587326713', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
 ('Honingdrop', '8719587327836', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
-('Zure Beren', '8719587321441', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
+('Zure Beren', '8719587321441', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),  
 ('Cola Flesjes', '8719587321237', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
 ('Turtles', '8719587322245', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
 ('Witte Muizen', '8719587328256', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
 ('Reuzen Slangen', '8719587325641', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
 ('Zoute Rijen', '8719587322739', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
-('Winegums', '8719587327527', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
 ('Drop Munten', '8719587322345', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
 ('Kruis Drop', '8719587322265', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6)),
-('Zoute Ruitjes', '8719587323256', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6));
+('Zoute Ruitjes', '8719587323256', 'Stuk', 1, NULL, SYSDATE(6), SYSDATE(6));  
 
 -- Tabelstructuur voor tabel `Allergeen`
 DROP TABLE IF EXISTS Allergeen;
@@ -232,8 +231,61 @@ BEGIN
 END //
 DELIMITER ;
 
-COMMIT;
+-- Stored Procedure voor het ophalen van alle leveranciers en het aantal verschillende producten dat zij leveren
+DROP PROCEDURE IF EXISTS spGetAllLeveranciers;
 
+DELIMITER //
+
+CREATE PROCEDURE spGetAllLeveranciers()
+BEGIN
+    SELECT 
+        l.Id,
+        l.Naam,
+        l.Contactpersoon,
+        l.Leveranciernummer,
+        l.Mobiel,
+        COUNT(DISTINCT ppa.ProductId) AS AantalProducten
+    FROM 
+        Leverancier l
+    LEFT JOIN 
+        ProductPerLeverancier ppa ON l.Id = ppa.LeverancierId
+    GROUP BY 
+        l.Id, l.Naam, l.Contactpersoon, l.Leveranciernummer, l.Mobiel
+    ORDER BY 
+        AantalProducten DESC;
+END //
+DELIMITER ;
+
+COMMIT;
+DROP PROCEDURE IF EXISTS spGetGeleverdeProducten;
+
+-- Verander even tijdelijk de opdrachtprompt naar //
+DELIMITER //
+
+CREATE PROCEDURE spGetGeleverdeProducten(IN leverancierId INT)
+BEGIN
+    SELECT 
+        p.Id,
+        p.Naam,
+        p.Barcode,
+        m.AantalAanwezig,
+        MAX(pl.DatumLevering) AS DatumLaatsteLevering
+    FROM 
+        Product p
+    JOIN 
+        ProductPerLeverancier pl ON p.Id = pl.ProductId
+    JOIN 
+        Magazijn m ON p.Id = m.ProductId
+    WHERE 
+        pl.LeverancierId = leverancierId
+    GROUP BY 
+        p.Id, p.Naam, p.Barcode, m.AantalAanwezig
+    ORDER BY 
+        m.AantalAanwezig DESC;
+END //
+DELIMITER ;
+
+COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
