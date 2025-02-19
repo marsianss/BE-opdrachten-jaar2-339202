@@ -48,6 +48,7 @@
                             <th>Leverancier</th>
                             <th>Contactpersoon</th>
                             <th>Mobiel</th>
+                            <th>Aantal Aanwezig</th>
                             <th>Info</th>
                         </tr>
                     </thead>
@@ -59,6 +60,7 @@
                                 <td><?= $product->LeverancierNaam ?></td>
                                 <td><?= $product->Contactpersoon ?></td>
                                 <td><?= $product->Mobiel ?></td>
+                                <td><?= $product->AantalAanwezig ?></td>
                                 <td><a href="<?= URLROOT; ?>/magazijn/leverancierInfo/<?= $product->ProductId ?>">?</a></td>
                             </tr>
                         <?php endforeach; ?>

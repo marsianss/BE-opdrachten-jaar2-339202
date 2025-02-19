@@ -104,12 +104,13 @@ class MagazijnModel
     public function getProductsByAllergeen($allergeen)
     {
         try {
-            $sql = "SELECT p.Id AS ProductId, p.Naam, p.Barcode, l.Naam AS LeverancierNaam, l.Contactpersoon, l.Mobiel
+            $sql = "SELECT p.Id AS ProductId, p.Naam, p.Barcode, l.Naam AS LeverancierNaam, l.Contactpersoon, l.Mobiel, m.AantalAanwezig
                     FROM Product p
                     JOIN ProductPerAllergeen pa ON p.Id = pa.ProductId
                     JOIN Allergeen a ON pa.AllergeenId = a.Id
                     JOIN ProductPerLeverancier pl ON p.Id = pl.ProductId
                     JOIN Leverancier l ON pl.LeverancierId = l.Id
+                    JOIN Magazijn m ON p.Id = m.ProductId
                     WHERE a.Naam = :allergeen
                     ORDER BY p.Naam ASC";
             $this->db->query($sql);
@@ -136,9 +137,10 @@ class MagazijnModel
     public function getSupplierInfoByProductId($productId)
     {
         try {
-            $sql = "SELECT l.Naam, l.Contactpersoon, l.Mobiel
+            $sql = "SELECT l.Naam, l.Contactpersoon, l.Mobiel, c.Straat, c.Huisnummer, c.Postcode, c.Stad
                     FROM Leverancier l
                     JOIN ProductPerLeverancier pl ON l.Id = pl.LeverancierId
+                    LEFT JOIN Contact c ON l.ContactId = c.Id
                     WHERE pl.ProductId = :productId";
             $this->db->query($sql);
             $this->db->bind(':productId', $productId);
