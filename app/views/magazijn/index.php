@@ -46,7 +46,7 @@
                             <tr>
                                 <td><?= $product->Barcode ?></td>
                                 <td><?= $product->Naam ?></td>
-                                <td><?= $product->Verpakkingseenheid ?></td>
+                                <td><?= $product->VerpakkingsEenheid ?></td>
                                 <td><?= $product->AantalAanwezig ?></td>
                                 <td class='text-center'>
                                     <!-- Link naar allergeneninformatie -->

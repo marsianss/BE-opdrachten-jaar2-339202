@@ -24,7 +24,7 @@ class Core
         /**
          * Check of de controllerclass bestaat
          */
-        if (file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
+        if (isset($url[0]) && file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
 
             /**
              * Stop de naam van de controller in $this->currentController
@@ -50,17 +50,19 @@ class Core
         /**
          * Check of de method (tweede woord in de URL) bestaat in de controllerclass
          */
-        if (method_exists($this->currentController, $url[1])) {
+        if (isset($url[1])) {
+            if (method_exists($this->currentController, $url[1])) {
 
-            /**
-             * Bewaar de naam van de method in $this->currentMethod
-             */
-            $this->currentMethod = $url[1];
+                /**
+                 * Bewaar de naam van de method in $this->currentMethod
+                 */
+                $this->currentMethod = $url[1];
 
-            /**
-             * Verwijder de naam van de method uit het array $url
-             */
-            unset($url[1]);
+                /**
+                 * Verwijder de naam van de method uit het array $url
+                 */
+                unset($url[1]);
+            }
         }
 
         /**

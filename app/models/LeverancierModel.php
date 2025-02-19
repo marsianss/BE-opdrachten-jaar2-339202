@@ -7,22 +7,20 @@ class LeverancierModel
     public function __construct()
     {
         // Initialiseer de database-verbinding
-        $this->db = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->db = new Database();
     }
 
     public function getAllLeveranciers()
     {
         try {
-            // SQL-query om alle leveranciers en het aantal verschillende producten dat zij leveren op te halen
-            $sql = "CALL spGetAllLeveranciers()";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute();
-            $result = $stmt->fetchAll(PDO::FETCH_OBJ);
-            $stmt->closeCursor(); // Sluit de vorige resultaatset
-            return $result;
+            $sql = "SELECT l.Id, l.Naam, l.Contactpersoon, l.Mobiel, l.Leveranciernummer, COUNT(pl.ProductId) AS AantalProducten
+                    FROM Leverancier l
+                    LEFT JOIN ProductPerLeverancier pl ON l.Id = pl.LeverancierId
+                    GROUP BY l.Id, l.Naam, l.Contactpersoon, l.Mobiel, l.Leveranciernummer
+                    ORDER BY l.Naam ASC";
+            $this->db->query($sql);
+            return $this->db->resultSet();
         } catch (Exception $e) {
-            // Log de fout en gooi een nieuwe uitzondering
             error_log("Fout in getAllLeveranciers: " . $e->getMessage());
             throw new Exception("Database query failed: " . $e->getMessage());
         }
@@ -33,13 +31,10 @@ class LeverancierModel
         try {
             // SQL-query om de geleverde producten van een specifieke leverancier op te halen
             $sql = "CALL spGetGeleverdeProducten(:leverancierId)";
-            $stmt = $this->db->prepare($sql);
+            $this->db->query($sql);
             // Bind de parameter leverancierId aan de query
-            $stmt->bindParam(':leverancierId', $leverancierId, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetchAll(PDO::FETCH_OBJ);
-            $stmt->closeCursor(); // Sluit de vorige resultaatset
-            return $result;
+            $this->db->bind(':leverancierId', $leverancierId);
+            return $this->db->resultSet();
         } catch (Exception $e) {
             // Log de fout en gooi een nieuwe uitzondering
             error_log("Fout in getGeleverdeProducten: " . $e->getMessage());
@@ -47,21 +42,22 @@ class LeverancierModel
         }
     }
 
-    public function updateProduct($id, $aantal, $datum) {
+    public function updateProduct($id, $aantal, $datum)
+    {
         try {
             $sql = 'UPDATE Magazijn SET AantalAanwezig = AantalAanwezig + :aantal, DatumGewijzigd = :datum WHERE ProductId = :id';
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt->bindParam(':aantal', $aantal, PDO::PARAM_INT);
-            $stmt->bindParam(':datum', $datum, PDO::PARAM_STR);
-            $stmt->execute();
+            $this->db->query($sql);
+            $this->db->bind(':id', $id);
+            $this->db->bind(':aantal', $aantal);
+            $this->db->bind(':datum', $datum);
+            $this->db->execute();
 
             // Update de datum van de laatste levering in de ProductPerLeverancier tabel
             $sql = 'UPDATE ProductPerLeverancier SET DatumLevering = :datum WHERE ProductId = :id';
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt->bindParam(':datum', $datum, PDO::PARAM_STR);
-            return $stmt->execute();
+            $this->db->query($sql);
+            $this->db->bind(':id', $id);
+            $this->db->bind(':datum', $datum);
+            return $this->db->execute();
         } catch (Exception $e) {
             // Log de fout en gooi een nieuwe uitzondering
             error_log("Fout in updateProduct: " . $e->getMessage());
@@ -69,15 +65,13 @@ class LeverancierModel
         }
     }
 
-    public function getProductById($id) {
+    public function getProductById($id)
+    {
         try {
             $sql = 'SELECT * FROM Product WHERE Id = :id';
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_OBJ);
-            $stmt->closeCursor(); // Sluit de vorige resultaatset
-            return $result;
+            $this->db->query($sql);
+            $this->db->bind(':id', $id);
+            return $this->db->single();
         } catch (Exception $e) {
             // Log de fout en gooi een nieuwe uitzondering
             error_log("Fout in getProductById: " . $e->getMessage());
@@ -85,7 +79,8 @@ class LeverancierModel
         }
     }
 
-    public function getLeverancierByProductId($productId) {
+    public function getLeverancierByProductId($productId)
+    {
         try {
             $sql = '
                 SELECT l.Naam, l.Contactpersoon, l.Mobiel, l.Leveranciernummer, COUNT(p.Id) AS AantalProducten, MAX(pl.DatumLevering) AS DatumEerstVolgendeLevering
@@ -95,12 +90,9 @@ class LeverancierModel
                 WHERE p.Id = :productId
                 GROUP BY l.Naam, l.Contactpersoon, l.Mobiel, l.Leveranciernummer
             ';
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':productId', $productId, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_OBJ);
-            $stmt->closeCursor(); // Sluit de vorige resultaatset
-            return $result;
+            $this->db->query($sql);
+            $this->db->bind(':productId', $productId);
+            return $this->db->single();
         } catch (Exception $e) {
             // Log de fout en gooi een nieuwe uitzondering
             error_log("Fout in getLeverancierByProductId: " . $e->getMessage());
@@ -108,15 +100,17 @@ class LeverancierModel
         }
     }
 
-    public function getLeverancierById($leverancierId) {
+    public function getLeverancierById($leverancierId)
+    {
         try {
-            $sql = 'SELECT * FROM Leverancier WHERE Id = :leverancierId';
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':leverancierId', $leverancierId, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_OBJ);
-            $stmt->closeCursor(); // Sluit de vorige resultaatset
-            return $result;
+            $sql = 'SELECT l.*, COUNT(pl.ProductId) AS AantalProducten
+                    FROM Leverancier l
+                    LEFT JOIN ProductPerLeverancier pl ON l.Id = pl.LeverancierId
+                    WHERE l.Id = :leverancierId
+                    GROUP BY l.Id';
+            $this->db->query($sql);
+            $this->db->bind(':leverancierId', $leverancierId);
+            return $this->db->single();
         } catch (Exception $e) {
             // Log de fout en gooi een nieuwe uitzondering
             error_log("Fout in getLeverancierById: " . $e->getMessage());
@@ -124,22 +118,20 @@ class LeverancierModel
         }
     }
 
-    public function updateLeverancier($data) {
-        $this->db->query('UPDATE leveranciers SET Naam = :naam, Contactpersoon = :contactpersoon, Leveranciernummer = :leveranciernummer, Mobiel = :mobiel, AantalProducten = :aantalProducten WHERE Id = :id');
-        // Bind values
-        $stmt = $this->db->prepare('UPDATE leveranciers SET Naam = :naam, Contactpersoon = :contactpersoon, Leveranciernummer = :leveranciernummer, Mobiel = :mobiel, AantalProducten = :aantalProducten WHERE Id = :id');
-        $stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
-        $stmt->bindParam(':naam', $data['naam'], PDO::PARAM_STR);
-        $stmt->bindParam(':contactpersoon', $data['contactpersoon'], PDO::PARAM_STR);
-        $stmt->bindParam(':leveranciernummer', $data['leveranciernummer'], PDO::PARAM_STR);
-        $stmt->bindParam(':mobiel', $data['mobiel'], PDO::PARAM_STR);
-        $stmt->bindParam(':aantalProducten', $data['aantalProducten'], PDO::PARAM_INT);
-
-        // Execute
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
+    public function updateLeverancier($data)
+    {
+        try {
+            $sql = 'UPDATE Leverancier SET Naam = :naam, Contactpersoon = :contactpersoon, Leveranciernummer = :leveranciernummer, Mobiel = :mobiel WHERE Id = :id';
+            $this->db->query($sql);
+            $this->db->bind(':id', $data['id']);
+            $this->db->bind(':naam', $data['naam']);
+            $this->db->bind(':contactpersoon', $data['contactpersoon']);
+            $this->db->bind(':leveranciernummer', $data['leveranciernummer']);
+            $this->db->bind(':mobiel', $data['mobiel']);
+            return $this->db->execute();
+        } catch (Exception $e) {
+            error_log("Fout in updateLeverancier: " . $e->getMessage());
+            throw new Exception("Database query failed: " . $e->getMessage());
         }
     }
 }

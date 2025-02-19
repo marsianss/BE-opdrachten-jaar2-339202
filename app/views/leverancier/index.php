@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <?php if ($data['message']) { ?>
+    <?php if ($data['message']): ?>
         <div class="row mt-3">
             <div class="col-12">
                 <!-- Foutmelding weergeven -->
@@ -25,7 +25,7 @@
                 </div>
             </div>
         </div>
-    <?php } else { ?>
+    <?php else: ?>
         <div class="row mt-3">
             <div class="col-12">
                 <!-- Tabel met leveranciers -->
@@ -34,10 +34,9 @@
                         <tr>
                             <th>Naam</th>
                             <th>Contactpersoon</th>
-                            <th>Leveranciernummer</th>
                             <th>Mobiel</th>
-                            <th>Aantal Producten</th>
-                            <th>Toon Producten</th>
+                            <th>Leveranciernummer</th>
+                            <th>Acties</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,14 +49,11 @@
                                 <tr>
                                     <td><?= $leverancier->Naam ?></td>
                                     <td><?= $leverancier->Contactpersoon ?></td>
-                                    <td><?= $leverancier->Leveranciernummer ?></td>
                                     <td><?= $leverancier->Mobiel ?></td>
-                                    <td><?= $leverancier->AantalProducten ?></td>
-                                    <td class='text-center'>
-                                        <!-- Link naar geleverde producten -->
-                                        <a href='<?= URLROOT . "/leverancier/geleverdeProducten/$leverancier->Id" ?>' class='btn btn-info'>
-                                            <i class='bi bi-box-seam'></i>
-                                        </a>
+                                    <td><?= $leverancier->Leveranciernummer ?></td>
+                                    <td>
+                                        <a href="<?= URLROOT; ?>/leverancier/edit/<?= $leverancier->Id ?>" class="btn btn-primary">Wijzig</a>
+                                        <a href="<?= URLROOT; ?>/leverancier/delete/<?= $leverancier->Id ?>" class="btn btn-danger">Verwijder</a>
                                     </td>            
                                 </tr>
                             <?php } 
@@ -66,7 +62,7 @@
                 </table>
             </div>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 
     <div class="row mt-3">
         <div class="col-12 text-right">

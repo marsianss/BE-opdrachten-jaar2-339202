@@ -39,6 +39,29 @@ class Leverancier extends BaseController
         $this->view('leverancier/index', $data);
     }
 
+    public function wijzigenLeverancier()
+    {
+        $data = [
+            'title' => 'Wijzig Leveranciers',
+            'leveranciers' => NULL,
+            'message' => NULL
+        ];
+
+        try {
+            $leveranciers = $this->leverancierModel->getAllLeveranciers();
+            if (empty($leveranciers)) {
+                $data['message'] = "Geen leveranciers gevonden.";
+            } else {
+                $data['leveranciers'] = $leveranciers;
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            $data['message'] = "Er is een fout opgetreden in de database: " . $e->getMessage();
+        }
+
+        $this->view('leverancier/wijzigenLeverancier', $data);
+    }
+
     public function geleverdeProducten($leverancierId)
     {
         // Initialiseer data array voor de view
@@ -133,7 +156,8 @@ class Leverancier extends BaseController
         }
     }
 
-    public function update($id) {
+    public function update($id)
+    {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST data
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -199,16 +223,17 @@ class Leverancier extends BaseController
         }
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $leverancier = $this->leverancierModel->getLeverancierById($id);
 
         $data = [
-            'id' => $leverancier->id,
-            'naam' => $leverancier->naam,
-            'contactpersoon' => $leverancier->contactpersoon,
-            'leveranciernummer' => $leverancier->leveranciernummer,
-            'mobiel' => $leverancier->mobiel,
-            'aantalProducten' => $leverancier->aantalProducten,
+            'id' => $leverancier->Id,
+            'naam' => $leverancier->Naam,
+            'contactpersoon' => $leverancier->Contactpersoon,
+            'leveranciernummer' => $leverancier->Leveranciernummer,
+            'mobiel' => $leverancier->Mobiel,
+            'aantalProducten' => $leverancier->AantalProducten,
             'naam_err' => '',
             'contactpersoon_err' => '',
             'leveranciernummer_err' => '',

@@ -13,10 +13,11 @@ class MagazijnModel
     public function getAllMagazijnProducts()
     {
         try {
-            // SQL-query om alle producten uit het magazijn op te halen
-            $sql = "CALL spReadMagazijnProduct()";
+            $sql = "SELECT p.Barcode, p.Naam, m.VerpakkingsEenheid, m.AantalAanwezig, p.Id AS ProductId
+                    FROM Magazijn m
+                    JOIN Product p ON m.ProductId = p.Id
+                    ORDER BY p.Barcode ASC";
             $this->db->query($sql);
-            // Voer de query uit en retourneer het resultaat
             return $this->db->resultSet();
         } catch (Exception $e) {
             // Log de fout en gooi een nieuwe uitzondering

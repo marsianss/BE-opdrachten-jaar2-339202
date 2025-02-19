@@ -108,4 +108,9 @@ class Database
     {
         return $this->statement->debugDumpParams();
     }
+
+    public function prepare($sql)
+    {
+        return $this->dbHandler->prepare($sql);
+    }
 }

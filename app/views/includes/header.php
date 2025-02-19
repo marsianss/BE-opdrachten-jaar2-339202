@@ -10,3 +10,4 @@
     <link rel="shortcut icon" href="<?= URLROOT; ?>/public/img/favicon.ico" type="image/x-icon">
   </head>
   <body>
+    <?php require_once APPROOT . '/views/includes/navbar.php'; ?>
