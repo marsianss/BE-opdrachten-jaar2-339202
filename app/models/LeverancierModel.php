@@ -123,4 +123,23 @@ class LeverancierModel
             throw new Exception("Database query failed: " . $e->getMessage());
         }
     }
+
+    public function updateLeverancier($data) {
+        $this->db->query('UPDATE leveranciers SET Naam = :naam, Contactpersoon = :contactpersoon, Leveranciernummer = :leveranciernummer, Mobiel = :mobiel, AantalProducten = :aantalProducten WHERE Id = :id');
+        // Bind values
+        $stmt = $this->db->prepare('UPDATE leveranciers SET Naam = :naam, Contactpersoon = :contactpersoon, Leveranciernummer = :leveranciernummer, Mobiel = :mobiel, AantalProducten = :aantalProducten WHERE Id = :id');
+        $stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
+        $stmt->bindParam(':naam', $data['naam'], PDO::PARAM_STR);
+        $stmt->bindParam(':contactpersoon', $data['contactpersoon'], PDO::PARAM_STR);
+        $stmt->bindParam(':leveranciernummer', $data['leveranciernummer'], PDO::PARAM_STR);
+        $stmt->bindParam(':mobiel', $data['mobiel'], PDO::PARAM_STR);
+        $stmt->bindParam(':aantalProducten', $data['aantalProducten'], PDO::PARAM_INT);
+
+        // Execute
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
