@@ -130,4 +130,65 @@ class Magazijn extends BaseController
         // Laad de view met de data
         $this->view('magazijn/allergeneninfo', $data);
     }
+
+    public function allergenenOverzicht()
+    {
+        $data = [
+            'title' => 'Overzicht Allergenen',
+            'allergenen' => NULL,
+            'selectedAllergeen' => '',
+            'products' => NULL,
+            'message' => NULL
+        ];
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $selectedAllergeen = trim($_POST['allergeen']);
+            $data['selectedAllergeen'] = $selectedAllergeen;
+
+            try {
+                $products = $this->magazijnModel->getProductsByAllergeen($selectedAllergeen);
+                if (empty($products)) {
+                    $data['message'] = "Geen producten gevonden met het allergeen $selectedAllergeen.";
+                } else {
+                    $data['products'] = $products;
+                }
+            } catch (Exception $e) {
+                error_log($e->getMessage());
+                $data['message'] = "Er is een fout opgetreden in de database: " . $e->getMessage();
+            }
+        }
+
+        try {
+            $allergenen = $this->magazijnModel->getAllAllergenen();
+            $data['allergenen'] = $allergenen;
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            $data['message'] = "Er is een fout opgetreden in de database: " . $e->getMessage();
+        }
+
+        $this->view('magazijn/allergenenOverzicht', $data);
+    }
+
+    public function leverancierInfo($productId)
+    {
+        $data = [
+            'title' => 'Overzicht Leverancier Gegevens',
+            'leverancier' => NULL,
+            'message' => NULL
+        ];
+
+        try {
+            $leverancier = $this->magazijnModel->getSupplierInfoByProductId($productId);
+            if (!$leverancier) {
+                $data['message'] = "Er zijn geen adresgegevens bekend.";
+            } else {
+                $data['leverancier'] = $leverancier;
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            $data['message'] = "Er is een fout opgetreden in de database: " . $e->getMessage();
+        }
+
+        $this->view('magazijn/leverancierInfo', $data);
+    }
 }

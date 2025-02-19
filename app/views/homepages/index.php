@@ -11,7 +11,7 @@
             <a href="<?= URLROOT; ?>/magazijn/index">Overzicht magazijn Jamin</a> |
             <a href="<?= URLROOT; ?>/leverancier/index">Overzicht leveranciers</a> |
             <a href="<?= URLROOT; ?>/leverancier/wijzigenLeverancier">Wijzig leveranciers</a> |
-            <a href="<?= URLROOT; ?>/allergenen/index">Overzicht Allergenen</a>
+            <a href="<?= URLROOT; ?>/magazijn/allergenenOverzicht">Overzicht Allergenen</a>
 
         </div>
         <div class="col-2"></div>

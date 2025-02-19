@@ -100,4 +100,52 @@ class MagazijnModel
             throw new Exception("Database query failed: " . $e->getMessage());
         }
     }
+
+    public function getProductsByAllergeen($allergeen)
+    {
+        try {
+            $sql = "SELECT p.Id AS ProductId, p.Naam, p.Barcode, l.Naam AS LeverancierNaam, l.Contactpersoon, l.Mobiel
+                    FROM Product p
+                    JOIN ProductPerAllergeen pa ON p.Id = pa.ProductId
+                    JOIN Allergeen a ON pa.AllergeenId = a.Id
+                    JOIN ProductPerLeverancier pl ON p.Id = pl.ProductId
+                    JOIN Leverancier l ON pl.LeverancierId = l.Id
+                    WHERE a.Naam = :allergeen
+                    ORDER BY p.Naam ASC";
+            $this->db->query($sql);
+            $this->db->bind(':allergeen', $allergeen);
+            return $this->db->resultSet();
+        } catch (Exception $e) {
+            error_log("Fout in getProductsByAllergeen: " . $e->getMessage());
+            throw new Exception("Database query failed: " . $e->getMessage());
+        }
+    }
+
+    public function getAllAllergenen()
+    {
+        try {
+            $sql = "SELECT Naam FROM Allergeen ORDER BY Naam ASC";
+            $this->db->query($sql);
+            return $this->db->resultSet();
+        } catch (Exception $e) {
+            error_log("Fout in getAllAllergenen: " . $e->getMessage());
+            throw new Exception("Database query failed: " . $e->getMessage());
+        }
+    }
+
+    public function getSupplierInfoByProductId($productId)
+    {
+        try {
+            $sql = "SELECT l.Naam, l.Contactpersoon, l.Mobiel
+                    FROM Leverancier l
+                    JOIN ProductPerLeverancier pl ON l.Id = pl.LeverancierId
+                    WHERE pl.ProductId = :productId";
+            $this->db->query($sql);
+            $this->db->bind(':productId', $productId);
+            return $this->db->single();
+        } catch (Exception $e) {
+            error_log("Fout in getSupplierInfoByProductId: " . $e->getMessage());
+            throw new Exception("Database query failed: " . $e->getMessage());
+        }
+    }
 }
