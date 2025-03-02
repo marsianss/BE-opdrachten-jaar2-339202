@@ -12,9 +12,6 @@
                 <a class="nav-link" href="<?= URLROOT; ?>/leverancier/index">Overzicht Leveranciers</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?= URLROOT; ?>/leverancier/wijzigenLeverancier">Wijzig Leveranciers</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="<?= URLROOT; ?>/magazijn/allergenenOverzicht">Overzicht Allergenen</a>
             </li>
         </ul>

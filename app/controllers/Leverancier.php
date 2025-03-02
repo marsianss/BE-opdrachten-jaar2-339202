@@ -133,7 +133,8 @@ class Leverancier extends BaseController
         }
     }
 
-    public function update($id) {
+    public function update($id)
+    {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST data
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -172,11 +173,17 @@ class Leverancier extends BaseController
             // Make sure no errors
             if (empty($data['naam_err']) && empty($data['contactpersoon_err']) && empty($data['leveranciernummer_err']) && empty($data['mobiel_err']) && empty($data['aantalProducten_err'])) {
                 // Validated
-                if ($this->leverancierModel->updateLeverancier($data)) {
-                    $this->setFlash('leverancier_message', 'Supplier updated');
-                    $this->redirect('leverancier');
-                } else {
-                    die('Something went wrong');
+                try {
+                    if ($this->leverancierModel->updateLeverancier($data)) {
+                        $this->setFlash('leverancier_message', 'Supplier updated');
+                        $this->redirect('leverancier');
+                    } else {
+                        throw new Exception('Something went wrong');
+                    }
+                } catch (Exception $e) {
+                    error_log($e->getMessage());
+                    $data['message'] = "Er is een fout opgetreden in de database: " . $e->getMessage();
+                    $this->view('leverancier/edit', $data);
                 }
             } else {
                 // Load view with errors
@@ -203,12 +210,12 @@ class Leverancier extends BaseController
         $leverancier = $this->leverancierModel->getLeverancierById($id);
 
         $data = [
-            'id' => $leverancier->id,
-            'naam' => $leverancier->naam,
-            'contactpersoon' => $leverancier->contactpersoon,
-            'leveranciernummer' => $leverancier->leveranciernummer,
-            'mobiel' => $leverancier->mobiel,
-            'aantalProducten' => $leverancier->aantalProducten,
+            'id' => $leverancier->Id,
+            'naam' => $leverancier->Naam,
+            'contactpersoon' => $leverancier->Contactpersoon,
+            'leveranciernummer' => $leverancier->Leveranciernummer,
+            'mobiel' => $leverancier->Mobiel,
+            'aantalProducten' => $leverancier->AantalProducten,
             'naam_err' => '',
             'contactpersoon_err' => '',
             'leveranciernummer_err' => '',

@@ -96,8 +96,9 @@ class WijzigLeverancierController extends BaseController
                 // Update leverancier
                 if ($this->leverancierModel->updateLeverancier($data)) {
                     // Redirect to leverancier details page
-                    flash('leverancier_message', 'De wijzigingen zijn doorgevoerd');
-                    redirect('leverancier/details/' . $id);
+                    $_SESSION['leverancier_message'] = 'De wijzigingen zijn doorgevoerd';
+                    header('Location: ' . URLROOT . '/leverancier/details/' . $id);
+                    exit();
                 } else {
                     die('Er is iets misgegaan');
                 }
