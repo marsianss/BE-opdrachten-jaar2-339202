@@ -1,4 +1,5 @@
-<?php require_once APPROOT . '/views/includes/header.php'; ?>
+8. Zorg voor voldoende validatie en foutafhandeling
+9. Maak 2 Unit Tests. Voer de unittests uit en maak een screenshot van het resultaat<?php require_once APPROOT . '/views/includes/header.php'; ?>
 
 <div class="container">
     <div class="row mt-3">
