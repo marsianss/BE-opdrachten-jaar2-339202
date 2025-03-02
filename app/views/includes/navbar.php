@@ -14,6 +14,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="<?= URLROOT; ?>/magazijn/allergenenOverzicht">Overzicht Allergenen</a>
             </li>
+        <!-- add more according to needs -->
         </ul>
     </div>
 </nav>
