@@ -2,10 +2,10 @@
 
 <style>
     .text-right {
-    display: flex;
-    justify-content: flex-end; /* Zorgt ervoor dat de inhoud naar rechts uitgelijnd wordt */
-    gap: 10px; /* Ruimte tussen de knoppen */
-}
+        display: flex;
+        justify-content: flex-end; /* Zorgt ervoor dat de inhoud naar rechts uitgelijnd wordt */
+        gap: 10px; /* Ruimte tussen de knoppen */
+    }
 </style>
 
 <div class="container">

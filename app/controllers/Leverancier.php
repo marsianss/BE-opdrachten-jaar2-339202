@@ -206,7 +206,8 @@ class Leverancier extends BaseController
         }
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $leverancier = $this->leverancierModel->getLeverancierById($id);
 
         $data = [

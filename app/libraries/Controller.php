@@ -1,29 +1,30 @@
 <?php
 
 /**
- * BaseController
- * Provides shared functionality for all controllers
+ * Base Controller
+ * Loads the models and views
  */
-class BaseController extends Controller
+class Controller
 {
-    // Laad het model
+    // Load model
     public function model($model)
     {
-        // Vereis het modelbestand
+        // Require model file
         require_once '../app/models/' . $model . '.php';
-        // Instantieer het model
+
+        // Instantiate model
         return new $model();
     }
 
-    // Laad de view
+    // Load view
     public function view($view, $data = [])
     {
-        // Controleer of de view bestaat
+        // Check for the view file
         if (file_exists('../app/views/' . $view . '.php')) {
             require_once '../app/views/' . $view . '.php';
         } else {
-            // View bestaat niet
-            die('View bestaat niet');
+            // View does not exist
+            die('View does not exist');
         }
     }
 }

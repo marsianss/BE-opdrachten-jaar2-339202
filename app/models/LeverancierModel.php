@@ -13,10 +13,10 @@ class LeverancierModel
     public function getAllLeveranciers()
     {
         try {
-            $sql = "SELECT l.Id, l.Naam, l.Contactpersoon, l.Mobiel, l.Leveranciernummer, COUNT(pl.ProductId) AS AantalProducten
+            $sql = "SELECT l.Id, l.Naam, l.ContactPersoon AS Contactpersoon, l.Mobiel, l.LeverancierNummer AS Leveranciernummer, COUNT(ppl.ProductId) AS AantalProducten
                     FROM Leverancier l
-                    LEFT JOIN ProductPerLeverancier pl ON l.Id = pl.LeverancierId
-                    GROUP BY l.Id, l.Naam, l.Contactpersoon, l.Mobiel, l.Leveranciernummer
+                    LEFT JOIN ProductPerLeverancier ppl ON l.Id = ppl.LeverancierId
+                    GROUP BY l.Id, l.Naam, l.ContactPersoon, l.Mobiel, l.LeverancierNummer
                     ORDER BY l.Naam ASC";
             $this->db->query($sql);
             return $this->db->resultSet();
@@ -103,11 +103,13 @@ class LeverancierModel
     public function getLeverancierById($leverancierId)
     {
         try {
-            $sql = 'SELECT l.*, COUNT(pl.ProductId) AS AantalProducten
+            $sql = "SELECT l.Id, l.Naam, l.ContactPersoon AS Contactpersoon, l.LeverancierNummer AS Leveranciernummer, l.Mobiel, 
+                           COUNT(ppl.ProductId) AS AantalProducten, c.Straat, c.Huisnummer, c.Postcode, c.Stad
                     FROM Leverancier l
-                    LEFT JOIN ProductPerLeverancier pl ON l.Id = pl.LeverancierId
+                    LEFT JOIN ProductPerLeverancier ppl ON l.Id = ppl.LeverancierId
+                    LEFT JOIN Contact c ON l.ContactId = c.Id
                     WHERE l.Id = :leverancierId
-                    GROUP BY l.Id';
+                    GROUP BY l.Id, l.Naam, l.ContactPersoon, l.LeverancierNummer, l.Mobiel, c.Straat, c.Huisnummer, c.Postcode, c.Stad";
             $this->db->query($sql);
             $this->db->bind(':leverancierId', $leverancierId);
             return $this->db->single();

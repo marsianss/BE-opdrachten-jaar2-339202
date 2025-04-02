@@ -20,7 +20,8 @@ class Core
          * Roep de functie getURL() aan om de url in een array te zetten
          */
         $url = $this->getURL();
-        
+        error_log("Parsed URL: " . print_r($url, true)); // Debugging
+
         /**
          * Check of de controllerclass bestaat
          */
@@ -71,6 +72,11 @@ class Core
          * array in $this->params gezet. Dit is een ternary operator
          */
         $this->params = $url ? array_values($url): [];
+
+        // Debugging
+        error_log("Controller: " . (is_object($this->currentController) ? get_class($this->currentController) : $this->currentController)); // Use get_class to log the class name
+        error_log("Method: " . $this->currentMethod);
+        error_log("Params: " . print_r($this->params, true));
 
         /**
          * Roep de method met alle parameters aan van de class 

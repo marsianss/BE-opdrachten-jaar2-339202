@@ -3,10 +3,10 @@
  * De database verbindingsgegevens
  */
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'jamin_a');
+define('DB_NAME', 'jamin_b');
 define('DB_USER', 'root');
 define('DB_PASS', '');
-define('port', '3308');
+define('DB_PORT', '3308');
 
 /**
  * De naam van de virtualhost

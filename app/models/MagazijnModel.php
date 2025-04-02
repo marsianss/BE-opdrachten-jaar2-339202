@@ -13,9 +13,9 @@ class MagazijnModel
     public function getAllMagazijnProducts()
     {
         try {
-            $sql = "SELECT p.Barcode, p.Naam, m.VerpakkingsEenheid, m.AantalAanwezig, p.Id AS ProductId
-                    FROM Magazijn m
-                    JOIN Product p ON m.ProductId = p.Id
+            $sql = "SELECT p.Barcode, p.Naam, ppl.Aantal AS AantalAanwezig, 'Stuk' AS VerpakkingsEenheid, p.Id AS ProductId
+                    FROM Product p
+                    JOIN ProductPerLeverancier ppl ON p.Id = ppl.ProductId
                     ORDER BY p.Barcode ASC";
             $this->db->query($sql);
             return $this->db->resultSet();
@@ -29,12 +29,11 @@ class MagazijnModel
     public function getLeveringInfoByProductId($productId)
     {
         try {
-            // SQL-query om leveringsinformatie voor een specifiek product op te halen
-            $sql = "SELECT l.*, lv.Naam AS LeverancierNaam, lv.Contactpersoon, lv.Leveranciernummer, lv.Mobiel 
-                    FROM ProductPerLeverancier l
-                    JOIN Leverancier lv ON l.LeverancierId = lv.Id
-                    WHERE l.ProductId = :productId
-                    ORDER BY l.DatumLevering ASC";
+            $sql = "SELECT ppl.*, l.Naam AS LeverancierNaam, l.ContactPersoon, l.LeverancierNummer, l.Mobiel
+                    FROM ProductPerLeverancier ppl
+                    JOIN Leverancier l ON ppl.LeverancierId = l.Id
+                    WHERE ppl.ProductId = :productId
+                    ORDER BY ppl.DatumLevering ASC";
             $this->db->query($sql);
             // Bind de parameter productId aan de query
             $this->db->bind(':productId', $productId);
@@ -67,11 +66,10 @@ class MagazijnModel
     public function getAllergenenInfoByProductId($productId)
     {
         try {
-            // SQL-query om allergeneninformatie voor een specifiek product op te halen
-            $sql = "SELECT a.* 
+            $sql = "SELECT a.Naam, a.Omschrijving
                     FROM Allergeen a
-                    JOIN ProductPerAllergeen pa ON a.Id = pa.AllergeenId
-                    WHERE pa.ProductId = :productId
+                    JOIN ProductPerAllergeen ppa ON a.Id = ppa.AllergeenId
+                    WHERE ppa.ProductId = :productId
                     ORDER BY a.Naam ASC";
             $this->db->query($sql);
             // Bind de parameter productId aan de query

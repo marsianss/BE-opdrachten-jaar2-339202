@@ -1,3 +1,5 @@
+<?php require_once '../app/config/config.php'; ?>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="<?= URLROOT; ?>">Jamin</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,7 +16,10 @@
             <li class="nav-item">
                 <a class="nav-link" href="<?= URLROOT; ?>/magazijn/allergenenOverzicht">Overzicht Allergenen</a>
             </li>
-        <!-- add more according to needs -->
+           <li>
+            <a class="nav-link" href="<?= URLROOT; ?>/product/index">Overzicht producten uit het assortiment</a>
+            </li>
+            <!-- Add more links as needed -->
         </ul>
     </div>
 </nav>

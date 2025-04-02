@@ -6,7 +6,7 @@
 class Database
 {
     private $dbHost = 'localhost';
-    private $dbName = 'jamin_a';
+    private $dbName = 'jamin_b';
     private $dbUser = 'root';
     private $dbPass = '';
     private $port = 3306;
